@@ -10,25 +10,22 @@
 <body>
     
     <form class="weatherForm">
-        <input type = "text" class="cityInput" placeholder="Enter city or ZIP code">
+        <input type = "text" class="cityInput" placeholder="Enter city">
         <button type="submit">Get Weather</button>
     </form>
 
-    <div class="card">
+    <div class="card" style="display: none">
         <h1 class="cityDisplay">Cape Girardeau</h1>
-        <p class="zipDisplay">63701</p>
         <p class="tempDisplay">67°F</p>
-        <p class="feelDisplay">67°F</p>
-        <p class="windDisplay">3.4 mph ENE</p>
+        <p class="feelDisplay">Feels like: 67°F</p>
+        <p class="windDisplay">Wind: 3.4 mph ENE</p>
         <p class="humidityDisplay">Humidity: 70%</p>
-        <p class="uvDisplay">4 UV</p>
+        <p class="uvDisplay">UV Index: 4 UV</p>
         <p class="descDisplay">Scattered Clouds</p>
         <p class="weatherEmoji">☁️</p>
         <p class="errorDisplay">Please enter a city or ZIP code</p>
     </div>
 
-    <script src="index.js"></script>
+    <script src="./js/index.js"></script>
 </body>
 </html>
-
-// 4:57
