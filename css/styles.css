@@ -39,7 +39,7 @@ button[type="submit"]:hover {
 }
 
 .card{
-    background: linear-gradient(180deg, hsl(210, 100%, 75%), orange);
+    background: linear-gradient(180deg, #66668a, #3d3d54);
     padding: 50px;
     border-radius: 10px;
     min-width: 300px;
@@ -56,6 +56,7 @@ h1 {
 
 p {
     font-size: 1.5rem;
+    margin-top: 1rem;
     margin: 5px 0;
 }
 

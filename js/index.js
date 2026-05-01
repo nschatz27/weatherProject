@@ -63,6 +63,7 @@ function displayWeatherInfo(data) {
     feelDisplay.textContent = `Feels like: ${feels_like.toFixed(0)}°F`;
     humidityDisplay.textContent = `Humidity: ${humidity}%`;
     descDisplay.textContent = description;
+    uvDisplay.textContent = 
     weatherEmoji.textContent = getWeatherEmoji(id);
 
     cityDisplay.classList.add("cityDisplay");
@@ -70,6 +71,7 @@ function displayWeatherInfo(data) {
     feelDisplay.classList.add("feelDisplay");
     humidityDisplay.classList.add("humidityDisplay");
     descDisplay.classList.add("descDisplay");
+    uvDisplay.classList.add("uvDisplay")
     weatherEmoji.classList.add("weatherEmoji");
 
     card.appendChild(cityDisplay);
