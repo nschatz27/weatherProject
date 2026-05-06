@@ -38,7 +38,7 @@ button[type="submit"]:hover {
     border: 2px solid #4f5672;
 }
 
-.card{
+.card {
     background: linear-gradient(180deg, #66668a, #3d3d54);
     padding: 50px;
     border-radius: 10px;
@@ -46,6 +46,7 @@ button[type="submit"]:hover {
     display: flex;
     flex-direction: column;
     align-items: center;
+    transition: background 1s ease, color 1s ease;
 }
 
 h1 {
@@ -95,4 +96,54 @@ p {
     font-size: 2.5rem;
     font-weight: bold;
     color: white;
+}
+
+.sunny {
+    background: linear-gradient(120deg, #f6d365, #fda085);
+    animation: sunnyMove 6s infinite alternate;
+}
+
+@keyframes sunnyMove {
+    from { background-position: 0% 50%; }
+    to   { background-position: 100% 50%; }
+}
+
+.cloudy {
+    background: linear-gradient(120deg, #757f9a, #d7dde8);
+    animation: cloudyMove 8s infinite alternate;
+}
+
+@keyframes cloudyMove {
+    from { background-position: 0% 50%; }
+    to   { background-position: 100% 50%; }
+}
+
+.rainy {
+    background: linear-gradient(120deg, #4e54c8, #8f94fb);
+    animation: rainyMove 5s infinite alternate;
+}
+
+@keyframes rainyMove {
+    from { background-position: 0% 50%; }
+    to   { background-position: 100% 50%; }
+}
+
+.stormy {
+    background: linear-gradient(120deg, #232526, #414345);
+    animation: stormyMove 4s infinite alternate;
+}
+
+@keyframes stormyMove {
+    from { background-position: 0% 50%; }
+    to   { background-position: 100% 50%; }
+}
+
+.snowy {
+    background: linear-gradient(120deg, #e0eafc, #cfdef3);
+    animation: snowyMove 7s infinite alternate;
+}
+
+@keyframes snowyMove {
+    from { background-position: 0% 50%; }
+    to   { background-position: 100% 50%; }
 }

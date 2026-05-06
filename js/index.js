@@ -21,7 +21,7 @@ weatherForm.addEventListener("submit", async event => {
         }
     }
     else {
-        displayError("Please enter a city or ZIP code");
+        displayError("Please enter a city");
     }
 });
 
@@ -42,9 +42,24 @@ async function getWeatherData(city) {
 
 function displayWeatherInfo(data) {
 
+
+    function getWeatherAnimation(id) {
+    if (id >= 200 && id < 300) return "stormy";
+    if (id >= 300 && id < 400) return "rainy";
+    if (id >= 500 && id < 600) return "rainy";
+    if (id >= 600 && id < 700) return "snowy";
+    if (id >= 700 && id < 800) return "cloudy";
+    if (id === 800) return "sunny";
+    if (id >= 801 && id < 900) return "cloudy";
+    return "";
+}
+
     const {name: city,
            main: {temp, feels_like, humidity},
            weather: [{description, id}]} = data;
+
+    card.className = "card";
+    card.classList.add(getWeatherAnimation(id));
 
     card.textContent = "";
     card.style.display = "flex";
@@ -54,7 +69,6 @@ function displayWeatherInfo(data) {
     const feelDisplay = document.createElement("p");
     const windDisplay = document.createElement("p");
     const humidityDisplay = document.createElement("p");
-    const uvDisplay = document.createElement("p");
     const descDisplay = document.createElement("p");
     const weatherEmoji = document.createElement("p");
 
@@ -63,7 +77,6 @@ function displayWeatherInfo(data) {
     feelDisplay.textContent = `Feels like: ${feels_like.toFixed(0)}°F`;
     humidityDisplay.textContent = `Humidity: ${humidity}%`;
     descDisplay.textContent = description;
-    uvDisplay.textContent = 
     weatherEmoji.textContent = getWeatherEmoji(id);
 
     cityDisplay.classList.add("cityDisplay");
@@ -71,7 +84,6 @@ function displayWeatherInfo(data) {
     feelDisplay.classList.add("feelDisplay");
     humidityDisplay.classList.add("humidityDisplay");
     descDisplay.classList.add("descDisplay");
-    uvDisplay.classList.add("uvDisplay")
     weatherEmoji.classList.add("weatherEmoji");
 
     card.appendChild(cityDisplay);
