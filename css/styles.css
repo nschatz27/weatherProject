@@ -1,11 +1,20 @@
+html, body {
+    height: 100%;
+}
+
 body {
     font-family: Arial, sans-serif;
     background-color: #252636;
     color: #fff;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    transition: background-image 0.8s ease-in-out;
     margin: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
+    min-height: 100vh;
 }
 
 .weatherForm {
@@ -26,27 +35,47 @@ button[type="submit"] {
     padding: 10px 20px;
     font-weight: bold;
     font-size: 1.5rem;
-    background-color: #828fbd;
+    background-color: #ffa723;
     color: white;
-    border: 2px solid #68729c;
+    border: 3px solid #ffb74a;
     border-radius: 5px;
     cursor: pointer;
+    box-shadow: 5px 5px 5px 0px rgba(95, 95, 95, 0.5);
 }
 
 button[type="submit"]:hover {
-    background-color: #6877b1;
-    border: 2px solid #4f5672;
+    background-color: #949494;
+    border: 2px solid #757575;
+}
+
+.clear-bg {
+  background: linear-gradient(#4facfe, #00f2fe);
+}
+
+.clouds-bg {
+  background: linear-gradient(#757f9a, #d7dde8);
+}
+
+.rain-bg {
+  background: linear-gradient(#4b79a1, #283e51);
+}
+
+.snow-bg {
+  background: linear-gradient(#e6dada, #274046);
 }
 
 .card {
-    background: linear-gradient(180deg, #66668a, #3d3d54);
+    background: rgba(0, 0, 0, 0.35); /* subtle dark glass */
+    backdrop-filter: blur(12px);
+    border-radius: 20px;
+    border: 2px solid rgba(255,255,255,0.3);
     padding: 50px;
-    border-radius: 10px;
     min-width: 300px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    transition: background 1s ease, color 1s ease;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+    transition: transform 0.3s ease, background 0.3s ease;
 }
 
 h1 {
@@ -87,20 +116,15 @@ p {
     font-size: 2rem;
 }
 
-.weatherEmoji {
-    margin: 0;
-    font-size: 7.5rem;
-}
-
 .errorDisplay {
     font-size: 2.5rem;
     font-weight: bold;
     color: white;
 }
 
-.sunny {
+.bg-sunny {
     background: linear-gradient(120deg, #f6d365, #fda085);
-    animation: sunnyMove 6s infinite alternate;
+    animation: sunnyMove 10s infinite alternate;
 }
 
 @keyframes sunnyMove {
@@ -108,9 +132,9 @@ p {
     to   { background-position: 100% 50%; }
 }
 
-.cloudy {
+.bg-cloudy {
     background: linear-gradient(120deg, #757f9a, #d7dde8);
-    animation: cloudyMove 8s infinite alternate;
+    animation: cloudyMove 12s infinite alternate;
 }
 
 @keyframes cloudyMove {
@@ -118,9 +142,9 @@ p {
     to   { background-position: 100% 50%; }
 }
 
-.rainy {
+.bg-rainy {
     background: linear-gradient(120deg, #4e54c8, #8f94fb);
-    animation: rainyMove 5s infinite alternate;
+    animation: rainyMove 8s infinite alternate;
 }
 
 @keyframes rainyMove {
@@ -128,22 +152,64 @@ p {
     to   { background-position: 100% 50%; }
 }
 
-.stormy {
-    background: linear-gradient(120deg, #232526, #414345);
-    animation: stormyMove 4s infinite alternate;
-}
-
-@keyframes stormyMove {
-    from { background-position: 0% 50%; }
-    to   { background-position: 100% 50%; }
-}
-
-.snowy {
+.bg-snowy {
     background: linear-gradient(120deg, #e0eafc, #cfdef3);
-    animation: snowyMove 7s infinite alternate;
+    animation: snowyMove 14s infinite alternate;
 }
 
 @keyframes snowyMove {
     from { background-position: 0% 50%; }
     to   { background-position: 100% 50%; }
+}
+
+.bg-foggy {
+    background: linear-gradient(120deg, #606c88, #3f4c6b);
+    animation: foggyMove 16s infinite alternate;
+}
+
+@keyframes foggyMove {
+    from { background-position: 0% 50%; }
+    to   { background-position: 100% 50%; }
+}
+
+.weatherIcon {
+    width: 120px;
+    height: 120px;
+    margin: 10px 0;
+}
+
+.weatherParticles {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.rain-drop {
+    position: absolute;
+    width: 2px;
+    height: 15px;
+    background: rgba(255,255,255,0.6);
+    bottom: 100%;
+    animation: rainFall linear infinite;
+}
+
+@keyframes rainFall {
+    to { transform: translateY(120vh); }
+}
+
+.snow-flake {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background: white;
+    border-radius: 50%;
+    opacity: 0.8;
+    bottom: 100%;
+    animation: snowFall linear infinite;
+}
+
+@keyframes snowFall {
+    to { transform: translateY(120vh) translateX(20px); }
 }
