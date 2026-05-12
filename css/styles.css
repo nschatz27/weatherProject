@@ -35,22 +35,44 @@ button[type="submit"] {
     padding: 10px 20px;
     font-weight: bold;
     font-size: 1.5rem;
-    background-color: #ffa723;
-    color: white;
-    border: 3px solid #ffb74a;
+    background-color: #f7f7f7;
+    color: rgb(31, 31, 31);
+    border: 3px solid #c9c9c9;
     border-radius: 5px;
     cursor: pointer;
     box-shadow: 5px 5px 5px 0px rgba(95, 95, 95, 0.5);
 }
 
+.suggestions {
+    position: absolute;
+    background: white;
+    color: black;
+    width: 300px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 10;
+}
+
+.suggestions div {
+    padding: 10px;
+    cursor: pointer;
+}
+
+.suggestions div:hover {
+    background: #eee;
+}
+
 button[type="submit"]:hover {
-    background-color: #949494;
-    border: 2px solid #757575;
+    background-color: #a5a5a5;
+    border: 2px solid #5a5a5a;
 }
 
 .clear-bg {
   background: linear-gradient(#4facfe, #00f2fe);
 }
+
 
 .clouds-bg {
   background: linear-gradient(#757f9a, #d7dde8);
@@ -65,7 +87,7 @@ button[type="submit"]:hover {
 }
 
 .card {
-    background: rgba(0, 0, 0, 0.35); /* subtle dark glass */
+    background: rgba(0, 0, 0, 0.35);
     backdrop-filter: blur(12px);
     border-radius: 20px;
     border: 2px solid rgba(255,255,255,0.3);
@@ -120,6 +142,11 @@ p {
     font-size: 2.5rem;
     font-weight: bold;
     color: white;
+}
+
+.bg-night {
+    background: linear-gradient(120deg, #313747, #5a5d63);
+    animation: cloudyMove 12s infinite alternate;
 }
 
 .bg-sunny {

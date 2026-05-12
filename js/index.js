@@ -1,38 +1,103 @@
+const stateAbbrev = {
+    "Alabama": "AL","Alaska": "AK","Arizona": "AZ","Arkansas": "AR",
+    "California": "CA","Colorado": "CO","Connecticut": "CT","Delaware": "DE",
+    "Florida": "FL","Georgia": "GA","Hawaii": "HI","Idaho": "ID",
+    "Illinois": "IL","Indiana": "IN","Iowa": "IA","Kansas": "KS",
+    "Kentucky": "KY","Louisiana": "LA","Maine": "ME","Maryland": "MD",
+    "Massachusetts": "MA","Michigan": "MI","Minnesota": "MN","Mississippi": "MS",
+    "Missouri": "MO","Montana": "MT","Nebraska": "NE","Nevada": "NV",
+    "New Hampshire": "NH","New Jersey": "NJ","New Mexico": "NM","New York": "NY",
+    "North Carolina": "NC","North Dakota": "ND","Ohio": "OH","Oklahoma": "OK",
+    "Oregon": "OR","Pennsylvania": "PA","Rhode Island": "RI","South Carolina": "SC",
+    "South Dakota": "SD","Tennessee": "TN","Texas": "TX","Utah": "UT",
+    "Vermont": "VT","Virginia": "VA","Washington": "WA","West Virginia": "WV",
+    "Wisconsin": "WI","Wyoming": "WY"
+};
+
 const weatherForm = document.querySelector(".weatherForm");
 const cityInput = document.querySelector(".cityInput");
 const card = document.querySelector(".card");
+const suggestionsBox = document.querySelector(".suggestions");
 const apiKey = "8852ced530e50ddec98ae83386195e25";
+
+function normalizeCityInput(input) {
+    return input.split(",")[0].trim();
+}
+
+cityInput.addEventListener("keyup", async () => {
+    const query = cityInput.value.trim();
+    if (query.length < 2) {
+        suggestionsBox.innerHTML = "";
+        return;
+    }
+
+    const url = `https://api.openweathermap.org/geo/1.0/direct?q=${query}&limit=15&appid=${apiKey}`;
+    const res = await fetch(url);
+    const data = await res.json();
+
+    suggestionsBox.innerHTML = "";
+
+    data.forEach(place => {
+        const div = document.createElement("div");
+        div.style.display = "flex";
+        div.style.alignItems = "center";
+        div.style.gap = "10px";
+        div.style.padding = "8px";
+        div.style.cursor = "pointer";
+
+        const flag = document.createElement("img");
+        flag.src = `https://flagsapi.com/${place.country}/flat/32.png`;
+        flag.width = 24;
+        flag.height = 24;
+
+        let stateText = "";
+        if (place.state && place.country === "US") {
+            stateText = stateAbbrev[place.state] || place.state;
+        }
+
+        const label = document.createElement("span");
+        label.textContent = stateText
+            ? `${place.name}, ${stateText} (${place.country})`
+            : `${place.name} (${place.country})`;
+
+        div.appendChild(flag);
+        div.appendChild(label);
+
+        div.addEventListener("click", () => {
+            cityInput.value = stateText
+                ? `${place.name}, ${stateText}`
+                : place.name;
+            suggestionsBox.innerHTML = "";
+        });
+
+        suggestionsBox.appendChild(div);
+    });
+});
 
 function getMeteocon(condition, isDay) {
     const base = "icons/";
     switch (condition) {
-        case "Clear":
-            return isDay ? base + "clear-day.svg" : base + "clear-night.svg";
-        case "Clouds":
-            return base + "cloudy.svg";
+        case "Clear": return isDay ? base + "clear-day.svg" : base + "clear-night.svg";
+        case "Clouds": return base + "cloudy.svg";
         case "Rain":
-        case "Drizzle":
-            return base + "rain.svg";
-        case "Thunderstorm":
-            return base + "thunderstorms.svg";
-        case "Snow":
-            return base + "snow.svg";
+        case "Drizzle": return base + "rain.svg";
+        case "Thunderstorm": return base + "thunderstorms.svg";
+        case "Snow": return base + "snow.svg";
         case "Mist":
         case "Fog":
         case "Haze":
-        case "Smoke":
-            return base + "fog.svg";
-        default:
-            return base + "partly-cloudy-day.svg";
+        case "Smoke": return base + "fog.svg";
+        default: return base + "partly-cloudy-day.svg";
     }
 }
 
-function updateBackground(condition) {
+function updateBackground(condition, isDay) {
     const body = document.body;
-    body.classList.remove("bg-sunny","bg-cloudy","bg-rainy","bg-snowy","bg-foggy");
+    body.classList.remove("bg-sunny","bg-night","bg-cloudy","bg-rainy","bg-snowy","bg-foggy");
+
     let c;
     switch (condition) {
-        case "Clear": c = "bg-sunny"; break;
+        case "Clear": c = isDay ? "bg-sunny" : "bg-night"; break;
         case "Clouds": c = "bg-cloudy"; break;
         case "Rain":
         case "Drizzle":
@@ -44,6 +109,7 @@ function updateBackground(condition) {
         case "Smoke": c = "bg-foggy"; break;
         default: c = "bg-cloudy";
     }
+
     body.classList.add(c);
 }
 
@@ -51,6 +117,7 @@ function setParticles(type) {
     const container = document.querySelector(".weatherParticles");
     container.innerHTML = "";
     let count = type === "rain" ? 80 : type === "snow" ? 60 : 0;
+
     for (let i = 0; i < count; i++) {
         const p = document.createElement("div");
         if (type === "rain") {
@@ -76,13 +143,14 @@ async function getWeatherData(city) {
 
 function displayWeatherInfo(data) {
     const condition = data.weather[0].main;
-    updateBackground(condition);
+    const isDay = data.weather[0].icon.includes("d");
+
+    updateBackground(condition, isDay);
 
     if (condition === "Rain" || condition === "Drizzle" || condition === "Thunderstorm") setParticles("rain");
     else if (condition === "Snow") setParticles("snow");
     else setParticles("none");
 
-    const isDay = data.weather[0].icon.includes("d");
     const iconSrc = getMeteocon(condition, isDay);
 
     const { name: city, main: { temp, feels_like, humidity }, weather: [{ description }] } = data;
@@ -132,7 +200,7 @@ function displayError(msg) {
 
 weatherForm.addEventListener("submit", async e => {
     e.preventDefault();
-    const city = cityInput.value;
+    const city = normalizeCityInput(cityInput.value);
     if (!city) return displayError("Please enter a city");
     try {
         const data = await getWeatherData(city);
