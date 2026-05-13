@@ -8,14 +8,18 @@
 
 </head>
 <body>
-    
-    <form class="weatherForm">
-        <input type = "text" class="cityInput" placeholder="Enter city">
-        <button type="submit">Get Weather</button>
-        <div class="suggestions"></div>
-    </form>
+
+    <nav class="navbar">
+        <form class="weatherForm">
+            <input type = "text" class="cityInput" placeholder="Enter city">
+            <button type="submit">Get Weather</button>
+            <div class="suggestions"></div>
+        </form>
+        <div class="datetime" id="datetime"></div>
+    </nav>
 
     <div class="card" style="display: none">
+
         <h1 class="cityDisplay">Cape Girardeau</h1>
         <p class="tempDisplay">67°F</p>
         <p class="feelDisplay">Feels like: 67°F</p>
@@ -26,6 +30,51 @@
     </div>
 
     <script src="./js/index.js"></script>
+    
+     <script>
+    function updateDateTime() {
+      const now = new Date();
+      const options = {
+        weekday: 'short',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      };
+      document.getElementById('datetime').textContent = now.toLocaleString('en-US', options);
+    }
+
+    updateDateTime();
+    setInterval(updateDateTime, 60000);
+  </script>
+
+    <div class="forecast">
+  <div class="forecast-day">
+    <p class="day">Mon</p>
+    <img src="icons/clear-day.svg" alt="Weather icon">
+    <p class="temp">72°F</p>
+  </div>
+  <div class="forecast-day">
+    <p class="day">Tue</p>
+    <img src="icons/cloudy.svg" alt="Weather icon">
+    <p class="temp">68°F</p>
+  </div>
+  <div class="forecast-day">
+    <p class="day">Wed</p>
+    <img src="icons/rain.svg" alt="Weather icon">
+    <p class="temp">65°F</p>
+  </div>
+  <div class="forecast-day">
+    <p class="day">Thu</p>
+    <img src="icons/snow.svg" alt="Weather icon">
+    <p class="temp">40°F</p>
+  </div>
+  <div class="forecast-day">
+    <p class="day">Fri</p>
+    <img src="icons/partly-cloudy-day.svg" alt="Weather icon">
+    <p class="temp">70°F</p>
+  </div>
+</div>
 
 </body>
 

@@ -24,20 +24,39 @@ function normalizeCityInput(input) {
     return input.split(",")[0].trim();
 }
 
-cityInput.addEventListener("keyup", async () => {
-    const query = cityInput.value.trim();
-    if (query.length < 2) {
+let typingTimer;
+const debounceDelay = 300;
+
+cityInput.addEventListener("input", () => {
+    clearTimeout(typingTimer);
+    typingTimer = setTimeout(fetchSuggestions, debounceDelay);
+});
+
+async function fetchSuggestions() {
+    const raw = cityInput.value;
+    const trimmed = raw.trim();
+    if (trimmed.length < 2) {
         suggestionsBox.innerHTML = "";
         return;
     }
 
-    const url = `https://api.openweathermap.org/geo/1.0/direct?q=${query}&limit=15&appid=${apiKey}`;
+    const parts = raw.split(",");
+    const cityPart = parts[0].trim();
+
+    const url = `https://api.openweathermap.org/geo/1.0/direct?q=${cityPart}&limit=15&appid=${apiKey}`;
     const res = await fetch(url);
     const data = await res.json();
 
     suggestionsBox.innerHTML = "";
 
-    data.forEach(place => {
+    const typed = cityPart.toLowerCase();
+
+    const filtered = data.filter(p => {
+        const name = p.name.toLowerCase();
+        return name.includes(typed);
+    });
+
+    filtered.forEach(place => {
         const div = document.createElement("div");
         div.style.display = "flex";
         div.style.alignItems = "center";
@@ -72,20 +91,20 @@ cityInput.addEventListener("keyup", async () => {
 
         suggestionsBox.appendChild(div);
     });
-});
+}
 
 function getMeteocon(condition, isDay) {
     const base = "icons/";
     switch (condition) {
         case "Clear": return isDay ? base + "clear-day.svg" : base + "clear-night.svg";
         case "Clouds": return base + "cloudy.svg";
-        case "Rain":
+        case "Rain": return base + "rain.svg";
         case "Drizzle": return base + "rain.svg";
         case "Thunderstorm": return base + "thunderstorms.svg";
         case "Snow": return base + "snow.svg";
-        case "Mist":
-        case "Fog":
-        case "Haze":
+        case "Mist": return base + "fog.svg";
+        case "Fog": return base + "fog.svg";
+        case "Haze": return base + "fog.svg";
         case "Smoke": return base + "fog.svg";
         default: return base + "partly-cloudy-day.svg";
     }
@@ -93,31 +112,26 @@ function getMeteocon(condition, isDay) {
 
 function updateBackground(condition, isDay) {
     const body = document.body;
-    body.classList.remove("bg-sunny","bg-night","bg-cloudy","bg-rainy","bg-snowy","bg-foggy");
-
-    let c;
+    body.className = "";
     switch (condition) {
-        case "Clear": c = isDay ? "bg-sunny" : "bg-night"; break;
-        case "Clouds": c = "bg-cloudy"; break;
-        case "Rain":
-        case "Drizzle":
-        case "Thunderstorm": c = "bg-rainy"; break;
-        case "Snow": c = "bg-snowy"; break;
-        case "Mist":
-        case "Fog":
-        case "Haze":
-        case "Smoke": c = "bg-foggy"; break;
-        default: c = "bg-cloudy";
+        case "Clear": body.classList.add(isDay ? "bg-sunny" : "bg-night"); break;
+        case "Clouds": body.classList.add("bg-cloudy"); break;
+        case "Rain": body.classList.add("bg-rainy"); break;
+        case "Drizzle":body.classList.add("bg-rainy"); break;
+        case "Thunderstorm": body.classList.add("bg-rainy"); break;
+        case "Snow": body.classList.add("bg-snowy"); break;
+        case "Mist": body.classList.add("bg-foggy"); break;
+        case "Fog": body.classList.add("bg-foggy"); break;
+        case "Haze": body.classList.add("bg-foggy"); break;
+        case "Smoke": body.classList.add("bg-foggy"); break;
+        default: body.classList.add("bg-cloudy");
     }
-
-    body.classList.add(c);
 }
 
 function setParticles(type) {
     const container = document.querySelector(".weatherParticles");
     container.innerHTML = "";
     let count = type === "rain" ? 80 : type === "snow" ? 60 : 0;
-
     for (let i = 0; i < count; i++) {
         const p = document.createElement("div");
         if (type === "rain") {
@@ -137,22 +151,63 @@ function setParticles(type) {
 async function getWeatherData(city) {
     const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=imperial`;
     const r = await fetch(url);
-    if (!r.ok) throw new Error("Could not fetch weather data");
+    if (!r.ok) throw new Error();
     return await r.json();
 }
+
+async function getForecastData(city) {
+    const url = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}&units=imperial`;
+    const r = await fetch(url);
+    if (!r.ok) throw new Error();
+    return await r.json();
+}
+
+function extractDailyForecast(list) {
+    const daily = {};
+    list.forEach(item => {
+        if (item.dt_txt.includes("12:00:00")) {
+            const date = new Date(item.dt_txt);
+            const day = date.toLocaleDateString("en-US", { weekday: "short" });
+            daily[day] = item;
+        }
+    });
+    return Object.values(daily).slice(0, 5);
+}
+
+function displayForecast(data) {
+    const list = extractDailyForecast(data.list);
+    const container = document.querySelector(".forecast");
+    container.innerHTML = "";
+    container.style.display = "flex";
+
+    list.forEach(item => {
+        const date = new Date(item.dt_txt);
+        const day = date.toLocaleDateString("en-US", { weekday: "short" });
+        const temp = Math.round(item.main.temp);
+        const condition = item.weather[0].main;
+        const iconSrc = getMeteocon(condition, true);
+
+        const div = document.createElement("div");
+        div.className = "forecast-day";
+        div.innerHTML = `
+            <p class="day">${day}</p>
+            <img src="${iconSrc}">
+            <p class="temp">${temp}°F</p>
+        `;
+        container.appendChild(div);
+    });
+}
+
 
 function displayWeatherInfo(data) {
     const condition = data.weather[0].main;
     const isDay = data.weather[0].icon.includes("d");
-
     updateBackground(condition, isDay);
-
     if (condition === "Rain" || condition === "Drizzle" || condition === "Thunderstorm") setParticles("rain");
     else if (condition === "Snow") setParticles("snow");
     else setParticles("none");
 
     const iconSrc = getMeteocon(condition, isDay);
-
     const { name: city, main: { temp, feels_like, humidity }, weather: [{ description }] } = data;
 
     card.className = "card";
@@ -196,16 +251,22 @@ function displayError(msg) {
     card.textContent = "";
     card.style.display = "flex";
     card.appendChild(e);
+    document.querySelector(".forecast").style.display = "none";
 }
 
 weatherForm.addEventListener("submit", async e => {
     e.preventDefault();
     const city = normalizeCityInput(cityInput.value);
-    if (!city) return displayError("Please enter a city");
+    if (!city) {
+        displayError("Please enter a city");
+        return;
+    }
     try {
         const data = await getWeatherData(city);
         displayWeatherInfo(data);
-    } catch (err) {
+        const forecast = await getForecastData(city);
+        displayForecast(forecast);
+    } catch {
         displayError("City not found");
     }
 });
